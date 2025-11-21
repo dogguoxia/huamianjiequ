@@ -2,7 +2,7 @@
 
 Python 窗口截图工具 (Window Capture Tool)
 
-版本: v1.0.6
+版本: v1.0.5
 语言: Python 3.x
 作者: (dogguoxia)
 
