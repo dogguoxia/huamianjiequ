@@ -45,6 +45,7 @@ Python 窗口截图工具 (Window Capture Tool)
 pip install Imagegrab
 
 pip install pywin32
+
 📝 版本历史 (Changelog)
 
 文档: 更新项目文档与使用说明。
