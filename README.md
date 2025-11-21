@@ -41,25 +41,9 @@ Python 窗口截图工具 (Window Capture Tool)
 1. 安装依赖库
 
 在终端或命令行中运行以下命令（注意：pywin32 包含了 win32gui 等模块）：
-
-code
-Bash
-download
-content_copy
-expand_less
-pip install pywin32 Pillow
-2. 运行程序
-
-运行主程序文件：
-
-code
-Bash
-download
-content_copy
-expand_less
-python main.py
+pip install Imagegrab
+pip install pywin32
 📝 版本历史 (Changelog)
-v1.0.6 (当前版本)
 
 文档: 更新项目文档与使用说明。
 
