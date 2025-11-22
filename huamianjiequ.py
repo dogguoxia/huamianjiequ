@@ -16,11 +16,12 @@ except Exception:
 class ScreenCaptureTool:
     def __init__(self, root):
         self.root = root
-        self.root.title("截图工具 v1.0.5")
-        self.root.geometry("300x250")
+        self.root.title("截图工具 v1.0.9")
+        self.root.geometry("300x290")
         self.root.attributes("-topmost", True)
         self.window_dict = {}
         self.save_path = os.getcwd()
+        self.is_auto_capturing = False
 
         self.frame = tk.Frame(root)
         self.frame.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
@@ -56,6 +57,12 @@ class ScreenCaptureTool:
         self.open_btn = tk.Button(self.btn_frame, text="打开目录", command=self.open_folder)
         self.open_btn.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(2, 0))
 
+        self.auto_frame = tk.Frame(self.frame)
+        self.auto_frame.pack(fill=tk.X, pady=(10, 0))
+
+        self.auto_btn = tk.Button(self.auto_frame, text="开始自动截图 (10s/张)", command=self.toggle_auto_capture)
+        self.auto_btn.pack(fill=tk.X)
+
         self.status_label = tk.Label(self.frame, text="准备就绪", fg="gray", wraplength=280)
         self.status_label.pack(pady=(15, 0), fill=tk.X)
 
@@ -89,9 +96,31 @@ class ScreenCaptureTool:
                 if "截图工具" not in title:
                     self.window_dict[title] = hwnd
 
+    def toggle_auto_capture(self):
+        if not self.is_auto_capturing:
+            self.is_auto_capturing = True
+            self.auto_btn.config(text="停止自动截图")
+            self.status_label.config(text="自动截图已启动", fg="blue")
+            self.auto_capture_loop()
+        else:
+            self.is_auto_capturing = False
+            self.auto_btn.config(text="开始自动截图 (10s/张)")
+            self.status_label.config(text="自动截图已停止", fg="blue")
+
+    def auto_capture_loop(self):
+        if self.is_auto_capturing:
+            try:
+                self.capture_window()
+            except Exception as e:
+                self.status_label.config(text=f"自动截图异常: {str(e)}", fg="red")
+            finally:
+                if self.is_auto_capturing:
+                    self.root.after(10000, self.auto_capture_loop)
+
     def capture_window(self):
-        self.status_label.config(text="正在处理...", fg="blue")
-        self.root.update()
+        if not self.is_auto_capturing:
+            self.status_label.config(text="正在处理...", fg="blue")
+            self.root.update()
 
         selected_title = self.window_list_cb.get()
         if not selected_title:
@@ -109,7 +138,11 @@ class ScreenCaptureTool:
             if win32gui.IsIconic(hwnd):
                 win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
 
-            win32gui.SetForegroundWindow(hwnd)
+            try:
+                win32gui.SetForegroundWindow(hwnd)
+            except Exception:
+                pass
+
             time.sleep(0.2)
 
             rect = win32gui.GetWindowRect(hwnd)
